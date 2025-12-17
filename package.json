@@ -62,13 +62,13 @@
   },
   "dependencies": {
     "lodash.merge": "^4.6.2",
-    "needle": "^3.3.1",
+    "needle": "^2.5.2",
     "stream-parser": "~0.3.1"
   },
   "devDependencies": {
     "@types/lodash.merge": "^4.6.9",
     "@types/mocha": "^10.0.6",
-    "@types/needle": "^3.3.0",
+    "@types/needle": "^2.5.2",
     "@types/node": "^20.11.0",
     "@typescript-eslint/eslint-plugin": "^6.18.1",
     "@typescript-eslint/parser": "^6.18.1",
