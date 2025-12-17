@@ -1,5 +1,5 @@
 {
-  "name": "probe-image-size",
+  "name": "@skywt/probe-image-size",
   "version": "8.0.0",
   "description": "Get image size without full download (JPG, GIF, PNG, WebP, BMP, TIFF, PSD, AVIF, HEIC)",
   "keywords": [
