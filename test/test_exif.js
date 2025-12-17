@@ -1,62 +1,60 @@
+"use strict";
 
-'use strict';
-
-
-const assert  = require('assert');
-const fs      = require('fs');
-const path    = require('path');
-const exif    = require('../lib/exif_utils');
-
+const assert = require("assert");
+const fs = require("fs");
+const path = require("path");
+const exif = require("../dist/lib/exif_utils");
 
 function fixture(s) {
   return Buffer.from(
-    s.replace(/;.*/mg, '')
+    s
+      .replace(/;.*/gm, "")
       .match(/[0-9a-f]{2}/gi)
-      .map(i => parseInt(i, 16))
+      .map((i) => parseInt(i, 16))
   );
 }
 
-
-describe('Exif parser', function () {
-  it('should iterate through exif', async function () {
+describe("Exif parser", function () {
+  it("should iterate through exif", async function () {
     let expected_exif_fields = {
-      '0:272:2:23': 'image_blob_reduce test',
-      '0:274:3:1': [ 6 ],
-      '0:282:5:1': null,
-      '0:283:5:1': null,
-      '0:296:3:1': [ 2 ],
-      '0:531:3:1': [ 1 ],
-      '0:34853:4:1': [ 138 ],
-      '34853:0:1:4': [ 2, 3, 0, 0 ],
-      '34853:2:5:3': null,
-      '34853:4:5:3': null,
-      '1:513:4:1': [ 258 ],
-      '1:514:4:1': [ 658 ]
+      "0:272:2:23": "image_blob_reduce test",
+      "0:274:3:1": [6],
+      "0:282:5:1": null,
+      "0:283:5:1": null,
+      "0:296:3:1": [2],
+      "0:531:3:1": [1],
+      "0:34853:4:1": [138],
+      "34853:0:1:4": [2, 3, 0, 0],
+      "34853:2:5:3": null,
+      "34853:4:5:3": null,
+      "1:513:4:1": [258],
+      "1:514:4:1": [658],
     };
-    let image   = fs.readFileSync(path.join(__dirname, 'fixtures', 'test.exif'));
+    let image = fs.readFileSync(path.join(__dirname, "fixtures", "test.exif"));
     let entries = {};
-    new exif.ExifParser(image, 0, image.length).each(entry => {
-      entries[entry.ifd + ':' + entry.tag + ':' + entry.format + ':' + entry.count] = entry.value;
+    new exif.ExifParser(image, 0, image.length).each((entry) => {
+      entries[
+        entry.ifd + ":" + entry.tag + ":" + entry.format + ":" + entry.count
+      ] = entry.value;
     });
     assert.deepEqual(entries, expected_exif_fields);
   });
 
-
-  it('should read all exif formats', async function () {
+  it("should read all exif formats", async function () {
     let expected_exif_fields = {
-      '0:50000:2:4': 'abc',
-      '0:50001:1:2': [ 255, 34 ],
-      '0:50002:6:2': [ -1, 34 ],
-      '0:50003:3:2': [ 65314, 13124 ],
-      '0:50004:8:2': [ -222, 13124 ],
-      '0:50005:4:1': [ 4280431428 ],
-      '0:50006:9:1': [ -14535868 ],
-      '0:50007:5:1': null,
-      '0:50008:10:1': null,
-      '0:50009:11:1': null,
-      '0:50010:12:1': null,
-      '0:50011:7:1': null,
-      '0:50012:255:1': null
+      "0:50000:2:4": "abc",
+      "0:50001:1:2": [255, 34],
+      "0:50002:6:2": [-1, 34],
+      "0:50003:3:2": [65314, 13124],
+      "0:50004:8:2": [-222, 13124],
+      "0:50005:4:1": [4280431428],
+      "0:50006:9:1": [-14535868],
+      "0:50007:5:1": null,
+      "0:50008:10:1": null,
+      "0:50009:11:1": null,
+      "0:50010:12:1": null,
+      "0:50011:7:1": null,
+      "0:50012:255:1": null,
     };
 
     let data = fixture(`
@@ -81,18 +79,19 @@ describe('Exif parser', function () {
     `);
 
     let entries = {};
-    new exif.ExifParser(data, 0, data.length).each(entry => {
-      entries[entry.ifd + ':' + entry.tag + ':' + entry.format + ':' + entry.count] = entry.value;
+    new exif.ExifParser(data, 0, data.length).each((entry) => {
+      entries[
+        entry.ifd + ":" + entry.tag + ":" + entry.format + ":" + entry.count
+      ] = entry.value;
     });
     assert.deepEqual(entries, expected_exif_fields);
   });
 
-
-  it('should decode utf8 if possible', async function () {
+  it("should decode utf8 if possible", async function () {
     let expected_exif_fields = {
-      '0:50000:2:3': 'α',
-      '0:50001:2:3': '\xff\xff',
-      '0:50002:2:4': 'αβ'
+      "0:50000:2:3": "α",
+      "0:50001:2:3": "\xff\xff",
+      "0:50002:2:4": "αβ",
     };
 
     let data = fixture(`
@@ -107,14 +106,15 @@ describe('Exif parser', function () {
     `);
 
     let entries = {};
-    new exif.ExifParser(data, 0, data.length).each(entry => {
-      entries[entry.ifd + ':' + entry.tag + ':' + entry.format + ':' + entry.count] = entry.value;
+    new exif.ExifParser(data, 0, data.length).each((entry) => {
+      entries[
+        entry.ifd + ":" + entry.tag + ":" + entry.format + ":" + entry.count
+      ] = entry.value;
     });
     assert.deepEqual(entries, expected_exif_fields);
   });
 
-
-  it('coverage - unexpected EOF', async function () {
+  it("coverage - unexpected EOF", async function () {
     let data;
 
     data = fixture(`
@@ -154,15 +154,14 @@ describe('Exif parser', function () {
     }, /unexpected EOF/);
   });
 
-
-  it('should parse subIFDs', async function () {
+  it("should parse subIFDs", async function () {
     let expected_exif_fields = {
-      '0:34665:4:1': [ 38 ],
-      '0:34853:4:1': [ 64 ],
-      '34665:40965:4:1': [ 78 ],
-      '34665:50001:2:4': 'abc',
-      '34853:50002:2:4': 'abc',
-      '40965:50003:2:4': 'abc'
+      "0:34665:4:1": [38],
+      "0:34853:4:1": [64],
+      "34665:40965:4:1": [78],
+      "34665:50001:2:4": "abc",
+      "34853:50002:2:4": "abc",
+      "40965:50003:2:4": "abc",
     };
 
     let data = fixture(`
@@ -186,17 +185,18 @@ describe('Exif parser', function () {
     `);
 
     let entries = {};
-    new exif.ExifParser(data, 0, data.length).each(entry => {
-      entries[entry.ifd + ':' + entry.tag + ':' + entry.format + ':' + entry.count] = entry.value;
+    new exif.ExifParser(data, 0, data.length).each((entry) => {
+      entries[
+        entry.ifd + ":" + entry.tag + ":" + entry.format + ":" + entry.count
+      ] = entry.value;
     });
     assert.deepEqual(entries, expected_exif_fields);
   });
 
-
-  it('should not parse if subIFD offset is not a number', async function () {
+  it("should not parse if subIFD offset is not a number", async function () {
     let expected_exif_fields = {
-      '0:34665:2:1': '&',
-      '0:34853:2:1': '@'
+      "0:34665:2:1": "&",
+      "0:34853:2:1": "@",
     };
 
     let data = fixture(`
@@ -220,15 +220,16 @@ describe('Exif parser', function () {
     `);
 
     let entries = {};
-    new exif.ExifParser(data, 0, data.length).each(entry => {
-      entries[entry.ifd + ':' + entry.tag + ':' + entry.format + ':' + entry.count] = entry.value;
+    new exif.ExifParser(data, 0, data.length).each((entry) => {
+      entries[
+        entry.ifd + ":" + entry.tag + ":" + entry.format + ":" + entry.count
+      ] = entry.value;
     });
     assert.deepEqual(entries, expected_exif_fields);
   });
 
-
-  describe('get_orientation', function () {
-    it('should read exif orientation', async function () {
+  describe("get_orientation", function () {
+    it("should read exif orientation", async function () {
       let data = fixture(`
         49 49 2A 00 ; TIFF signature
         08 00 00 00 ; next IFD
@@ -242,8 +243,7 @@ describe('Exif parser', function () {
       assert.strictEqual(exif.get_orientation(data), 6);
     });
 
-
-    it('should return 0 if no orientation tag', async function () {
+    it("should return 0 if no orientation tag", async function () {
       let data = fixture(`
         49 49 2A 00 ; TIFF signature
         08 00 00 00 ; next IFD
@@ -256,9 +256,8 @@ describe('Exif parser', function () {
       assert.strictEqual(exif.get_orientation(data), 0);
     });
 
-
-    it('should return -1 on error', async function () {
-      let data = fixture('00 00 00 00');
+    it("should return -1 on error", async function () {
+      let data = fixture("00 00 00 00");
       assert.strictEqual(exif.get_orientation(data), -1);
     });
   });
